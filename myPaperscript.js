@@ -1,11 +1,29 @@
-var myCircle = new Path.Circle(new Point(100, 70), 50);
-myCircle.strokeColor = 'black';
-myCircle.selected = false;
+var alien = new Path.Rectangle(new Point(150, 60), new Point(170, 70));
+alien.selected = true;
 
-myCircle.removeSegment(0)
+var direction = true; // True for right, false for left.
+var stepSize = view.size.width / 8 
 
-myCircle.fillColor = 'black'
+alien.fillColor = "black";
 
-var myRectangle = new Path.Rectangle(new Point(10,10), new Point(80, 40))
-myRectangle.selected = true;
-myRectangle.fillColor = 'yellow'
+var timerID = setInterval(move, 500);
+
+function lateralMove() {
+  if (direction) {
+    alien.position.x += stepSize
+  } else {
+    alien.position.x -= stepSize
+  }
+}
+
+function move() {
+  lateralMove();
+  if (alien.bounds.right >= view.size.width-stepSize || alien.bounds.left <= stepSize) {
+    alien.position.y += stepSize * 0.7; //adjusts for the width / height ratio of the view
+    direction= !direction;
+    lateralMove();
+  } 
+
+
+ 
+}
