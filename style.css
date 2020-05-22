@@ -1,0 +1,14 @@
+
+html,
+body {
+    height: 100%;
+}
+
+canvas {
+  width:100%;
+  background-color: blue;
+}
+/* Scale canvas with resize attribute to full size */
+canvas[resize] {
+width: 100%;
+}
