@@ -16,6 +16,9 @@ var stepSize = view.size.width / 8;
 
 // var timerID = setInterval(move, 500);
 
+
+
+
 function lateralMove() {
   if (direction) {
     alien.position.x += stepSize;
@@ -114,3 +117,6 @@ function onFrame(event) {
   laserMove();
   isLaserHitting();
 }
+
+
+drawLimeAlien(10, 10, 4)
