@@ -5,7 +5,8 @@ body {
 }
 
 /* Scale canvas with resize attribute to full size */
-canvas[resize] {
-width: 100%;
-background-color: lightgray;
+canvas {
+    width: 500px;
+    height: 400px;
+    background-color: lightgray;
 }
