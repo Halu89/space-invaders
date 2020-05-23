@@ -2,12 +2,34 @@ var canon;
 var laserShots = []; // Must be global to get accessed from both shoot and animate function
 
 var direction = true; // True for right, false for left.
-var stepSize = view.size.width / 25;
-
-var timerID = setInterval(aliensMove, 500);
+var stepSize = view.size.width / 20;
 
 var aliens = new Group();
+var startBtn = document.querySelector('#start-pause')
+var resetBtn = document.querySelector('#reset')
 
+var timerID;
+var score = 0;
+var scoreDisplay = document.querySelector('#score-display')
+
+setup(2);
+
+startBtn.addEventListener('click', function() {
+  if (!timerID) {
+    timerID = setInterval(aliensMove, 500);
+  } else {
+    clearInterval(timerID)
+    timerID = null;
+  }
+})
+
+resetBtn.addEventListener('click', function() {
+  aliens.remove()
+  aliens = new Group();
+  canon.position = new Point(view.size.width / 2, view.size.height * 0.9)
+  direction = true;
+  setup()
+})
 
 // canon controls
 function onKeyDown(event) {
@@ -27,7 +49,9 @@ function onKeyDown(event) {
 }
 
 function canonMoveL() {
+  console.log(canon.bounds)
   if (canon.bounds.left >= 20) {
+
     canon.position.x -= 10;
   }
 }
@@ -45,6 +69,7 @@ function shoot() {
   laserShot.strokeColor = "red";
 
   laserShots.push(laserShot);
+
 }
 
 //General animations
@@ -69,9 +94,10 @@ function aliensMove() {
     direction = !direction;
     lateralMove(aliens);
   }
-  // For debug
+  // Game over
   if (aliens.bounds.bottom >= view.size.height) {
-    aliens.position = [150, 60];
+    clearInterval(timerID);
+    
   }
 }
 
@@ -96,11 +122,12 @@ function isLaserHitting() {
       var alien = aliensArray[i]; //Select an individual alien
 
       if (shot.intersects(alien)) {
-        console.log("I'm hit !");
         shot.remove(); // Removes from the global project object
         array.splice(index, 1); // Removes the laser shot from the laserShots array
-
         alien.remove(); // TODO add a cool explosion
+
+        score += 10;
+        scoreDisplay.textContent = score;
       }
     }
   });
@@ -112,7 +139,7 @@ function onFrame(event) {
   isLaserHitting();
 }
 
-setup(2);
+
 
 function setup(magnification) {
   // Adapted from Vladimir on Codepen.io
@@ -121,7 +148,12 @@ function setup(magnification) {
   var canonPos = [view.size.width / 2, view.size.height * 0.9];
 
   // Change these  parameters
-  canon = drawShip(canonPos[0], canonPos[1], magnification);
+  if (!canon) {
+    canon = drawShip(canonPos[0], canonPos[1], magnification);
+  }
+
+  canon.selected = true; //debug
+  console.log(canon.bounds)
 
 
   for (var x = 40; x < 300; x += 45) {
