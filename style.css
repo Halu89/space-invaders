@@ -48,3 +48,14 @@ button:hover {
     justify-content: space-around;
     margin: 20px
 }
+
+footer {
+    position: absolute;
+    bottom: 10px;
+    font-size: small;
+    color: rgba(128, 128, 128, 0.719);
+}
+
+footer a {
+    color: white
+}
