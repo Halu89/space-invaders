@@ -12,6 +12,16 @@ var timerID;
 var score = 0;
 var scoreDisplay = document.querySelector('#score-display')
 
+
+// /////////////////////////////////////
+// Todo: 
+// Block controls when game not in play mode
+// add controls explaination
+// add levels 
+// add sounds
+// adapt size of the game screen base on the window size. 
+
+
 setup(2);
 
 startBtn.addEventListener('click', function() {
