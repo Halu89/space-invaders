@@ -17,9 +17,13 @@ setup(2);
 startBtn.addEventListener('click', function() {
   if (!timerID) {
     timerID = setInterval(aliensMove, 500);
+    startBtn.textContent = 'Pause'
+    startBtn.blur(); //Remove focus from the button to allow controls
   } else {
     clearInterval(timerID)
     timerID = null;
+    startBtn.textContent = 'Start'
+    startBtn.blur(); 
   }
 })
 
@@ -28,6 +32,7 @@ resetBtn.addEventListener('click', function() {
   aliens = new Group();
   canon.position = new Point(view.size.width / 2, view.size.height * 0.9)
   direction = true;
+  resetBtn.blur()
   setup()
 })
 
@@ -44,12 +49,12 @@ function onKeyDown(event) {
     // Shoot
     console.log("PEW PEW !!");
     shoot();
-    console.log(aliens);
+
   }
 }
 
 function canonMoveL() {
-  console.log(canon.bounds)
+
   if (canon.bounds.left >= 20) {
 
     canon.position.x -= 10;
@@ -152,8 +157,7 @@ function setup(magnification) {
     canon = drawShip(canonPos[0], canonPos[1], magnification);
   }
 
-  canon.selected = true; //debug
-  console.log(canon.bounds)
+
 
 
   for (var x = 40; x < 300; x += 45) {
