@@ -37,8 +37,6 @@ button:hover {
     color: rgb(0, 30, 128);
     outline: none;
     box-shadow: 10px 5px 5px rgba(172, 255, 47, 0.26);
-
-    
 }
 
 
@@ -58,4 +56,13 @@ footer {
 
 footer a {
     color: white
+}
+
+#rules {
+    height: 220px;
+    background-color: rgb(0, 30, 128);
+    color: greenyellow;
+    -webkit-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+    overflow-y: hidden;
 }
