@@ -1,5 +1,7 @@
 var canon;
 var laserShots = []; // Must be global to get accessed from both shoot and animate function
+var lastShot = true;
+var shotTimer = 200;
 
 var direction = true; // True for right, false for left.
 var stepSize = view.size.width / 20;
@@ -40,6 +42,7 @@ resetBtn.addEventListener("click", function () {
 
 // canon controls
 function onKeyDown(event) {
+  if (!timerID) return null; // No controls if the game is paused.
   if (event.key === "left" || event.key === "q") {
     // Move left if not at the border
     canonMoveL();
@@ -66,12 +69,18 @@ function canonMoveR() {
 }
 
 function shoot() {
+  if (!lastShot) return null; //Disable rapid fire
   //offset the position of the shot from the center of the canon shape
   var laserPos = new Point(canon.position + [0, -4]);
   var laserShot = new Path(laserPos, laserPos + [0, -11]);
   laserShot.strokeColor = "red";
-
   laserShots.push(laserShot);
+
+  //Enable laser shots again after shotTimer ms.
+  lastShot = false; 
+  setTimeout(function () {
+    lastShot = true;
+  }, shotTimer); 
 }
 
 //General animations
