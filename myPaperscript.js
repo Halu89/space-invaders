@@ -13,8 +13,15 @@ var resetBtn = document.querySelector("#reset");
 var timerID;
 var score = 0;
 var scoreDisplay = document.querySelector("#score-display");
+var gameOver;
 
-setup(2);
+var keyPressed = {
+  left: false,
+  right: false,
+  space: false,
+};
+
+drawGame(2);
 
 function startpause() {
   if (!timerID) {
@@ -37,7 +44,7 @@ function reset() {
   canon.position = new Point(view.size.width / 2, view.size.height * 0.9);
   alienMovementDirection = "right";
   resetBtn.blur();
-  setup();
+  drawGame();
   score = 0;
   scoreDisplay.textContent = score;
   laserShots.forEach(function (shot) {
@@ -50,7 +57,8 @@ resetBtn.addEventListener("click", reset);
 
 // canon controls
 function onKeyDown(event) {
-  if (!timerID) return null; // No controls if the game is paused.
+  // Function called by paperscript
+  if (!timerID) return false; // No controls if the game is paused.
   if (event.key === "left" || event.key === "q") {
     // Move left if not at the border
     canonMoveL();
@@ -62,6 +70,7 @@ function onKeyDown(event) {
     console.log("PEW PEW !!");
     shoot();
   }
+  return false; // Prevent the keyboard event from bubbling up.
 }
 
 function canonMoveL() {
@@ -92,34 +101,33 @@ function shoot() {
 }
 
 //General animations
-function aliensMove() {
-  var aliensArray = aliens.children;
-  function lateralMove(alien) {
-    if (alienMovementDirection === "right") {
-      alien.position.x += stepSize;
-    } else {
-      alien.position.x -= stepSize;
-    }
+function lateralMove(alien) {
+  if (alienMovementDirection === "right") {
+    alien.position.x += stepSize;
+  } else {
+    alien.position.x -= stepSize;
   }
+}
 
+function aliensMove() {
   lateralMove(aliens);
   var isAlienInScreen =
-    aliens.bounds.right >= view.size.width - stepSize ||
-    aliens.bounds.left <= stepSize;
+    aliens.bounds.right <= view.size.width - stepSize &&
+    aliens.bounds.left >= stepSize;
 
-  if (isAlienInScreen) {
-    aliens.position.y += stepSize * 0.5; //adjusts for the width / height ratio of the view
+  if (!isAlienInScreen) {
+    aliens.position.y += stepSize * 0.5; // Move the aliens down
     if (alienMovementDirection === "right") {
       alienMovementDirection = "left";
     } else {
       alienMovementDirection = "right";
     }
-
-    lateralMove(aliens);
+    lateralMove(aliens); // Replace the aliens in screen
   }
   // Game over
   if (aliens.bounds.bottom >= view.size.height) {
     clearInterval(timerID);
+    gameOver = true;
   }
 }
 
@@ -156,12 +164,14 @@ function isLaserHitting() {
 }
 
 function onFrame(event) {
+  // Called by paperscript every frame
+  
   // If a laser has been fired, animate it
   laserMove();
   isLaserHitting();
 }
 
-function setup(magnification) {
+function drawGame(magnification) {
   // Adapted from Vladimir on Codepen.io
   // https://codepen.io/vherever/pen/Inyhm?editors=0010
 
