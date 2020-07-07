@@ -16,7 +16,7 @@ var scoreDisplay = document.querySelector("#score-display");
 
 setup(2);
 
-startBtn.addEventListener("click", function () {
+function startpause() {
   if (!timerID) {
     timerID = setInterval(aliensMove, 500);
     startBtn.textContent = "Pause";
@@ -27,9 +27,11 @@ startBtn.addEventListener("click", function () {
     startBtn.textContent = "Start";
     startBtn.blur();
   }
-});
+}
 
-resetBtn.addEventListener("click", function () {
+startBtn.addEventListener("click", startpause);
+
+function reset() {
   aliens.remove();
   aliens = new Group();
   canon.position = new Point(view.size.width / 2, view.size.height * 0.9);
@@ -38,7 +40,13 @@ resetBtn.addEventListener("click", function () {
   setup();
   score = 0;
   scoreDisplay.textContent = score;
-});
+  laserShots.forEach(function (shot) {
+    shot.remove();
+  });
+  laserShots = [];
+  startpause();
+}
+resetBtn.addEventListener("click", reset);
 
 // canon controls
 function onKeyDown(event) {
@@ -77,10 +85,10 @@ function shoot() {
   laserShots.push(laserShot);
 
   //Enable laser shots again after shotTimer ms.
-  lastShot = false; 
+  lastShot = false;
   setTimeout(function () {
     lastShot = true;
-  }, shotTimer); 
+  }, shotTimer);
 }
 
 //General animations
