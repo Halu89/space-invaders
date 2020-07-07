@@ -3,7 +3,7 @@ var laserShots = []; // Must be global to get accessed from both shoot and anima
 var lastShot = true;
 var shotTimer = 200;
 
-var direction = true; // True for right, false for left.
+var alienMovementDirection = "right";
 var stepSize = view.size.width / 20;
 
 var aliens = new Group();
@@ -35,7 +35,7 @@ function reset() {
   aliens.remove();
   aliens = new Group();
   canon.position = new Point(view.size.width / 2, view.size.height * 0.9);
-  direction = true;
+  alienMovementDirection = "right";
   resetBtn.blur();
   setup();
   score = 0;
@@ -95,7 +95,7 @@ function shoot() {
 function aliensMove() {
   var aliensArray = aliens.children;
   function lateralMove(alien) {
-    if (direction) {
+    if (alienMovementDirection === "right") {
       alien.position.x += stepSize;
     } else {
       alien.position.x -= stepSize;
@@ -109,7 +109,12 @@ function aliensMove() {
 
   if (isAlienInScreen) {
     aliens.position.y += stepSize * 0.5; //adjusts for the width / height ratio of the view
-    direction = !direction;
+    if (alienMovementDirection === "right") {
+      alienMovementDirection = "left";
+    } else {
+      alienMovementDirection = "right";
+    }
+
     lateralMove(aliens);
   }
   // Game over
