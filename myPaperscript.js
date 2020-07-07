@@ -5,43 +5,44 @@ var direction = true; // True for right, false for left.
 var stepSize = view.size.width / 20;
 
 var aliens = new Group();
-var startBtn = document.querySelector('#start-pause')
-var resetBtn = document.querySelector('#reset')
+var startBtn = document.querySelector("#start-pause");
+var resetBtn = document.querySelector("#reset");
 
 var timerID;
 var score = 0;
-var scoreDisplay = document.querySelector('#score-display')
+var scoreDisplay = document.querySelector("#score-display");
 
 setup(2);
 
-startBtn.addEventListener('click', function() {
+startBtn.addEventListener("click", function () {
   if (!timerID) {
     timerID = setInterval(aliensMove, 500);
-    startBtn.textContent = 'Pause'
+    startBtn.textContent = "Pause";
     startBtn.blur(); //Remove focus from the button to allow controls
   } else {
-    clearInterval(timerID)
+    clearInterval(timerID);
     timerID = null;
-    startBtn.textContent = 'Start'
-    startBtn.blur(); 
+    startBtn.textContent = "Start";
+    startBtn.blur();
   }
-})
+});
 
-resetBtn.addEventListener('click', function() {
-  aliens.remove()
+resetBtn.addEventListener("click", function () {
+  aliens.remove();
   aliens = new Group();
-  canon.position = new Point(view.size.width / 2, view.size.height * 0.9)
+  canon.position = new Point(view.size.width / 2, view.size.height * 0.9);
   direction = true;
-  resetBtn.blur()
-  setup()
-})
+  resetBtn.blur();
+  setup();
+  score = 0;
+  scoreDisplay.textContent = score;
+});
 
 // canon controls
 function onKeyDown(event) {
   if (event.key === "left" || event.key === "q") {
     // Move left if not at the border
     canonMoveL();
-
   } else if (event.key === "right" || event.key === "d") {
     // Move right if not at the border
     canonMoveR();
@@ -49,14 +50,11 @@ function onKeyDown(event) {
     // Shoot
     console.log("PEW PEW !!");
     shoot();
-
   }
 }
 
 function canonMoveL() {
-
   if (canon.bounds.left >= 20) {
-
     canon.position.x -= 10;
   }
 }
@@ -74,12 +72,10 @@ function shoot() {
   laserShot.strokeColor = "red";
 
   laserShots.push(laserShot);
-
 }
 
 //General animations
 function aliensMove() {
-
   var aliensArray = aliens.children;
   function lateralMove(alien) {
     if (direction) {
@@ -88,7 +84,7 @@ function aliensMove() {
       alien.position.x -= stepSize;
     }
   }
-  
+
   lateralMove(aliens);
   var isAlienInScreen =
     aliens.bounds.right >= view.size.width - stepSize ||
@@ -102,7 +98,6 @@ function aliensMove() {
   // Game over
   if (aliens.bounds.bottom >= view.size.height) {
     clearInterval(timerID);
-    
   }
 }
 
@@ -144,8 +139,6 @@ function onFrame(event) {
   isLaserHitting();
 }
 
-
-
 function setup(magnification) {
   // Adapted from Vladimir on Codepen.io
   // https://codepen.io/vherever/pen/Inyhm?editors=0010
@@ -156,9 +149,6 @@ function setup(magnification) {
   if (!canon) {
     canon = drawShip(canonPos[0], canonPos[1], magnification);
   }
-
-
-
 
   for (var x = 40; x < 300; x += 45) {
     // and these  parameters
