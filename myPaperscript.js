@@ -1,57 +1,67 @@
 var canon;
 var laserShots = []; // Must be global to get accessed from both shoot and animate function
+var lastShot = true;
+var shotTimer = 200;
 
-var direction = true; // True for right, false for left.
+var alienMovementDirection = "right";
 var stepSize = view.size.width / 20;
 
 var aliens = new Group();
-var startBtn = document.querySelector('#start-pause')
-var resetBtn = document.querySelector('#reset')
+var startBtn = document.querySelector("#start-pause");
+var resetBtn = document.querySelector("#reset");
 
 var timerID;
 var score = 0;
-var scoreDisplay = document.querySelector('#score-display')
+var scoreDisplay = document.querySelector("#score-display");
+var gameOver;
 
+var keyPressed = {
+  left: false,
+  right: false,
+  space: false,
+};
 
-// /////////////////////////////////////
-// Todo: 
-// Block controls when game not in play mode
-// add controls explaination
-// add levels 
-// add sounds
-// adapt size of the game screen base on the window size. 
+drawGame(2);
 
-
-setup(2);
-
-startBtn.addEventListener('click', function() {
+function startpause() {
   if (!timerID) {
     timerID = setInterval(aliensMove, 500);
-    startBtn.textContent = 'Pause'
+    startBtn.textContent = "Pause";
     startBtn.blur(); //Remove focus from the button to allow controls
   } else {
-    clearInterval(timerID)
+    clearInterval(timerID);
     timerID = null;
-    startBtn.textContent = 'Start'
-    startBtn.blur(); 
+    startBtn.textContent = "Start";
+    startBtn.blur();
   }
-})
+}
 
-resetBtn.addEventListener('click', function() {
-  aliens.remove()
+startBtn.addEventListener("click", startpause);
+
+function reset() {
+  aliens.remove();
   aliens = new Group();
-  canon.position = new Point(view.size.width / 2, view.size.height * 0.9)
-  direction = true;
-  resetBtn.blur()
-  setup()
-})
+  canon.position = new Point(view.size.width / 2, view.size.height * 0.9);
+  alienMovementDirection = "right";
+  resetBtn.blur();
+  drawGame();
+  score = 0;
+  scoreDisplay.textContent = score;
+  laserShots.forEach(function (shot) {
+    shot.remove();
+  });
+  laserShots = [];
+  startpause();
+}
+resetBtn.addEventListener("click", reset);
 
 // canon controls
 function onKeyDown(event) {
+  // Function called by paperscript
+  if (!timerID) return false; // No controls if the game is paused.
   if (event.key === "left" || event.key === "q") {
     // Move left if not at the border
     canonMoveL();
-
   } else if (event.key === "right" || event.key === "d") {
     // Move right if not at the border
     canonMoveR();
@@ -59,14 +69,12 @@ function onKeyDown(event) {
     // Shoot
     console.log("PEW PEW !!");
     shoot();
-
   }
+  return false; // Prevent the keyboard event from bubbling up.
 }
 
 function canonMoveL() {
-
   if (canon.bounds.left >= 20) {
-
     canon.position.x -= 10;
   }
 }
@@ -78,41 +86,48 @@ function canonMoveR() {
 }
 
 function shoot() {
+  if (!lastShot) return null; //Disable rapid fire
   //offset the position of the shot from the center of the canon shape
   var laserPos = new Point(canon.position + [0, -4]);
   var laserShot = new Path(laserPos, laserPos + [0, -11]);
   laserShot.strokeColor = "red";
-
   laserShots.push(laserShot);
 
+  //Enable laser shots again after shotTimer ms.
+  lastShot = false;
+  setTimeout(function () {
+    lastShot = true;
+  }, shotTimer);
 }
 
 //General animations
-function aliensMove() {
-
-  var aliensArray = aliens.children;
-  function lateralMove(alien) {
-    if (direction) {
-      alien.position.x += stepSize;
-    } else {
-      alien.position.x -= stepSize;
-    }
+function lateralMove(alien) {
+  if (alienMovementDirection === "right") {
+    alien.position.x += stepSize;
+  } else {
+    alien.position.x -= stepSize;
   }
-  
+}
+
+function aliensMove() {
   lateralMove(aliens);
   var isAlienInScreen =
-    aliens.bounds.right >= view.size.width - stepSize ||
-    aliens.bounds.left <= stepSize;
+    aliens.bounds.right <= view.size.width - stepSize &&
+    aliens.bounds.left >= stepSize;
 
-  if (isAlienInScreen) {
-    aliens.position.y += stepSize * 0.5; //adjusts for the width / height ratio of the view
-    direction = !direction;
-    lateralMove(aliens);
+  if (!isAlienInScreen) {
+    aliens.position.y += stepSize * 0.5; // Move the aliens down
+    if (alienMovementDirection === "right") {
+      alienMovementDirection = "left";
+    } else {
+      alienMovementDirection = "right";
+    }
+    lateralMove(aliens); // Replace the aliens in screen
   }
   // Game over
   if (aliens.bounds.bottom >= view.size.height) {
     clearInterval(timerID);
-    
+    gameOver = true;
   }
 }
 
@@ -149,14 +164,14 @@ function isLaserHitting() {
 }
 
 function onFrame(event) {
+  // Called by paperscript every frame
+  
   // If a laser has been fired, animate it
   laserMove();
   isLaserHitting();
 }
 
-
-
-function setup(magnification) {
+function drawGame(magnification) {
   // Adapted from Vladimir on Codepen.io
   // https://codepen.io/vherever/pen/Inyhm?editors=0010
 
@@ -166,9 +181,6 @@ function setup(magnification) {
   if (!canon) {
     canon = drawShip(canonPos[0], canonPos[1], magnification);
   }
-
-
-
 
   for (var x = 40; x < 300; x += 45) {
     // and these  parameters

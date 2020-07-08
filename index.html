@@ -1,38 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Space invaders</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Space invaders</title>
 
-  <!-- My CSS -->
-  <link rel="stylesheet" href="style.css">
+    <!-- My CSS -->
+    <link rel="stylesheet" href="style.css" />
 
-  <!-- Load the Paper.js library -->
-  <script type="text/javascript" src="node_modules/paper/dist/paper-full.js"></script>
+    <!-- Load the Paper.js library -->
+    <script
+      type="text/javascript"
+      src="node_modules/paper/dist/paper-full.js"
+    ></script>
 
-  <!-- Load external PaperScript and associate it with myCanvas -->
-  
-</head>
+    <!-- Load external PaperScript and associate it with myCanvas -->
+    <script
+      type="text/paperscript"
+      src="myPaperscript.js"
+      canvas="myCanvas"
+    ></script>
+  </head>
 
-<body>
-  <div id="container">
-    <h1>Score : <span id='score-display'>0</span></h1>
-    <div id="controls">
-      <button id='start-pause'>Start</button>
-      <button id='reset'>Reset</button>
+  <body>
+    <div id="container">
+      <h1>Score : <span id="score-display">0</span></h1>
+      <div id="controls">
+        <button id="start-pause">Start</button>
+        <button id="reset">Reset</button>
+      </div>
+
+      <canvas id="myCanvas" resize></canvas>
+
+      <button onclick="slideToggle()" style="display: block;">Rules</button>
+      <div id="rules">
+        <h2>Controls</h2>
+        <p>Use the space key to shoot</p>
+        <p>Use the arrow keys to move left/right</p>
+        <h2>Goal</h2>
+        <p>The aliens are invading the earth. Shoot them all before they reach the ground.</p>
+      </div>
     </div>
-
-    <canvas id='myCanvas' resize></canvas>
-    
-  </div>
-<footer>
-  <a href="https://halu89.github.io/portfoliov2/projects.html">Go back</a>
-  <p style = 'font-size: 8px;'>Background by Carl Raw on Unsplash</p>
-</footer>
-</body>
-<script src="app.js"></script>
-<script type="text/paperscript" src="myPaperscript.js" canvas="myCanvas"></script>
-
-
+    <footer>
+      <a href="https://halu89.github.io/portfoliov2/projects.html">Go back</a>
+      <p style="font-size: 8px;">Background by Carl Raw on Unsplash</p>
+    </footer>
+  </body>
+  <script src="app.js"></script>
 </html>
