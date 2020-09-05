@@ -1,6 +1,6 @@
 html,
 body {
-    background-image: url('carl-raw-m3hn2Kn5Bns-unsplash.jpg');
+    background-image: url('arcade.jpg');
     background-size: cover;
     color: rgb(159, 171, 184);
     display: flex;
@@ -59,10 +59,12 @@ footer a {
 }
 
 #rules {
-    height: 220px;
+    height: 180px;
+    padding: 20px;
+    margin-top: 10px;
     background-color: rgb(0, 30, 128);
     color: greenyellow;
     -webkit-transition: all .3s ease-in-out;
     transition: all .3s ease-in-out;
-    overflow-y: hidden;
+    overflow: hidden;
 }
