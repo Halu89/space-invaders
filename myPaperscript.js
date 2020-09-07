@@ -5,6 +5,7 @@ var shotTimer = 200;
 
 var alienMovementDirection = "right";
 var stepSize = view.size.width / 20;
+var canonSpeed = 2;
 
 var aliens = new Group();
 var startBtn = document.querySelector("#start-pause");
@@ -51,7 +52,9 @@ function reset() {
     shot.remove();
   });
   laserShots = [];
-  startpause();
+  // Pause the game if you hit reset while game running
+  if (timerID) startpause();
+  gameOver = false;
 }
 resetBtn.addEventListener("click", reset);
 
@@ -60,28 +63,47 @@ function onKeyDown(event) {
   // Function called by paperscript
   if (!timerID) return false; // No controls if the game is paused.
   if (event.key === "left" || event.key === "q") {
+    keyPressed.left = true;
     // Move left if not at the border
-    canonMoveL();
+    // canonMoveL();
   } else if (event.key === "right" || event.key === "d") {
+    keyPressed.right = true;
     // Move right if not at the border
-    canonMoveR();
+    // canonMoveR();
   } else if (event.key === "space") {
+    keyPressed.space = true;
     // Shoot
     console.log("PEW PEW !!");
-    shoot();
+    // shoot();
+  }
+  return false; // Prevent the keyboard event from bubbling up.
+}
+function onKeyUp(event) {
+  // Function called by paperscript
+  if (!timerID) return false; // No controls if the game is paused.
+  if (event.key === "left" || event.key === "q") {
+    keyPressed.left = false;
+    // Move left if not at the border
+    // canonMoveL();
+  } else if (event.key === "right" || event.key === "d") {
+    keyPressed.right = false;
+    // Move right if not at the border
+    // canonMoveR();
+  } else if (event.key === "space") {
+    keyPressed.space = false;
   }
   return false; // Prevent the keyboard event from bubbling up.
 }
 
-function canonMoveL() {
+function canonMoveL(distance) {
   if (canon.bounds.left >= 20) {
-    canon.position.x -= 10;
+    canon.position.x -= distance;
   }
 }
 
-function canonMoveR() {
+function canonMoveR(distance) {
   if (canon.bounds.right <= view.size.width - 20) {
-    canon.position.x += 10;
+    canon.position.x += distance;
   }
 }
 
@@ -133,6 +155,8 @@ function aliensMove() {
 
 function laserMove() {
   //animate the laser shots fired (works on an empty array)
+  if (!timerID) return;
+
   laserShots.forEach(function (item) {
     item.position.y -= 2;
     //Remove the shots out of bounds
@@ -145,6 +169,7 @@ function laserMove() {
 
 function isLaserHitting() {
   var aliensArray = aliens.children; //Create an array from the aliens Group to iterate over.
+  if (aliensArray.length === 0) gameOver = true;
 
   laserShots.forEach(function (shot, index, array) {
     for (var i = aliensArray.length - 1; i >= 0; i--) {
@@ -165,7 +190,9 @@ function isLaserHitting() {
 
 function onFrame(event) {
   // Called by paperscript every frame
-  
+  if (keyPressed.right) canonMoveR(canonSpeed);
+  if (keyPressed.left) canonMoveL(canonSpeed);
+  if (keyPressed.space) shoot();
   // If a laser has been fired, animate it
   laserMove();
   isLaserHitting();
